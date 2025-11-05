@@ -1,0 +1,14 @@
+Needle V1
+
+Name: Valhalla supermassive
+Version: 1.0
+By: Dart
+Created: 5/11/2025
+Updated: 5/11/2025
+
+[Install]
+download https://valhallaproduction.s3.us-west-2.amazonaws.com/supermassive/ValhallaSupermassiveWin_V4_0_0.zip
+verify SHA256 35d8968690bf2936f7725c595fd1b8977f24b7d87a445de1eb45604200cd65b5
+unzip
+extract ValhallaSupermassiveWin_V4_0_0.exe
+move {code_GetVST3Dir}/ValhallaSupermassive.vst3 to %VST3%
