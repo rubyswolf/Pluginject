@@ -7,7 +7,7 @@
    "scripts": {
       "lint": "eslint . --ext .ts,.tsx --fix",
       "format": "prettier --write .",
-      "dev": "concurrently \"vite\" \"npm:dev:electron\"",
+      "dev": "npm run build:electron && concurrently \"vite\" \"npm:dev:electron\"",
       "dev:electron": "cross-env NODE_ENV=development electron .",
       "build:app": "vite build",
       "build:electron": "tsc -p tsconfig.json",

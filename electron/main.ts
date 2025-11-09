@@ -1,5 +1,10 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
+import { fileURLToPath } from "url";
+
+// ESM shim for __filename and __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Acquire single instance lock
 const gotLock = app.requestSingleInstanceLock();
