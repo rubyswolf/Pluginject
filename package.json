@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "author": "Dart Spark",
    "description": "A universal installer for audio plugins",
-   "main": "electron/main.ts",
+   "main": "dist/electron/main.js",
    "scripts": {
       "lint": "eslint . --ext .ts,.tsx --fix",
       "format": "prettier --write .",
@@ -17,8 +17,17 @@
    "keywords": [],
    "build": {
       "appId": "com.dartjs.pluginject",
+      "productName": "Pluginject",
+      "files": [
+         "dist/frontend/**/*",
+         "dist/electron/**/*",
+         "package.json"
+      ],
       "win": {
          "target": "nsis"
+      },
+      "directories": {
+         "buildResources": "build"
       },
       "fileAssociations": [
          {

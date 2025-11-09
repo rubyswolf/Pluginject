@@ -1,30 +1,58 @@
 import { app, BrowserWindow } from "electron";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import path from "path";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Acquire single instance lock
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) {
+   // Another instance is running — exit this one
+   app.quit();
+} else {
+   // Keep a reference to the main window so we can focus/restore it later
+   let win: BrowserWindow | null = null;
 
-let mainWindow: BrowserWindow | null = null;
+   const isDev = !app.isPackaged;
 
-const createWindow = async () => {
-   mainWindow = new BrowserWindow({
-      width: 800,
-      height: 600,
-      webPreferences: {
-         preload: path.join(__dirname, "preload.js"),
-      },
+   function createWindow() {
+      win = new BrowserWindow({
+         width: 1000,
+         height: 700,
+         webPreferences: {
+            preload: path.join(__dirname, "preload.js"), // now resolves correctly in dist/electron
+         },
+      });
+
+      if (isDev) {
+         win.loadURL("http://localhost:5173");
+      } else {
+         win.loadFile(path.join(__dirname, "../frontend/index.html")); // React output
+      }
+
+      win.on("closed", () => {
+         win = null;
+      });
+   }
+
+   // If a second instance is launched, focus/restore the existing window
+   app.on("second-instance", () => {
+      if (win) {
+         if (win.isMinimized()) win.restore();
+         win.focus();
+      }
    });
 
-   if (process.env.NODE_ENV === "development") {
-      await mainWindow.loadURL("http://localhost:5173");
-      mainWindow.webContents.openDevTools();
-   } else {
-      await mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
-   }
-};
+   app.whenReady().then(() => {
+      createWindow();
 
-app.whenReady().then(createWindow);
+      app.on("activate", () => {
+         // On macOS recreate a window when the dock icon is clicked and there are no other windows open.
+         if (BrowserWindow.getAllWindows().length === 0) createWindow();
+      });
+   });
 
-app.on("window-all-closed", () => {
-   if (process.platform !== "darwin") app.quit();
-});
+   // Quit when all windows are closed, except on macOS.
+   app.on("window-all-closed", () => {
+      if (process.platform !== "darwin") {
+         app.quit();
+      }
+   });
+}
