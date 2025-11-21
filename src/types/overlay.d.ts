@@ -1,8 +1,8 @@
 declare global {
    interface Window {
       overlay?: {
-         enterFullscreen: () => void;
-         exitFullscreen: () => void;
+         openOverlayWindow: () => Promise<void>;
+         closeOverlayWindow: () => Promise<void>;
       };
    }
 }

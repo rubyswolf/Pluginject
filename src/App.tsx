@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import closeSfx from "../audio/close.wav";
 import openSfx from "../audio/open.wav";
 
 export default function App() {
-   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
    const openAudioRef = useRef<HTMLAudioElement | null>(null);
    const closeAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -13,38 +12,46 @@ export default function App() {
       closeAudioRef.current = new Audio(closeSfx);
    }, []);
 
-   useEffect(
-      () => () => {
-         window.overlay?.exitFullscreen();
-      },
-      []
-   );
-
-   const playSound = useMemo(
-      () => (audio: HTMLAudioElement | null) => {
-         if (!audio) return;
-         audio.currentTime = 0;
-         audio.play().catch(() => {
-            // Ignore autoplay errors (user gesture requirement, etc.)
-         });
-      },
-      []
-   );
-
-   const openOverlay = () => {
-      setIsOverlayOpen(true);
-      playSound(openAudioRef.current);
-      window.overlay?.enterFullscreen();
-   };
-
-   const closeOverlay = () => {
-      setIsOverlayOpen(false);
-      playSound(closeAudioRef.current);
-      window.overlay?.exitFullscreen();
-   };
+   const isOverlayWindow = useMemo(() => {
+      const params = new URLSearchParams(window.location.search);
+      return params.has("overlay");
+   }, []);
 
    useEffect(() => {
-      if (!isOverlayOpen) return;
+      if (!isOverlayWindow) return;
+
+      const previousHtmlBackground = document.documentElement.style.background;
+      const previousBodyBackground = document.body.style.background;
+
+      document.documentElement.style.background = "transparent";
+      document.body.style.background = "transparent";
+
+      return () => {
+         document.documentElement.style.background = previousHtmlBackground;
+         document.body.style.background = previousBodyBackground;
+      };
+   }, [isOverlayWindow]);
+
+   const playSound = useCallback((audio: HTMLAudioElement | null) => {
+      if (!audio) return;
+      audio.currentTime = 0;
+      audio.play().catch(() => {
+         // Ignore autoplay errors (user gesture requirement, etc.)
+      });
+   }, []);
+
+   const openOverlay = useCallback(() => {
+      playSound(openAudioRef.current);
+      window.overlay?.openOverlayWindow();
+   }, [playSound]);
+
+   const closeOverlay = useCallback(() => {
+      playSound(closeAudioRef.current);
+      window.overlay?.closeOverlayWindow();
+   }, [playSound]);
+
+   useEffect(() => {
+      if (!isOverlayWindow) return;
 
       const onKeyDown = (event: KeyboardEvent) => {
          if (event.key === "Escape") {
@@ -56,7 +63,62 @@ export default function App() {
       return () => {
          window.removeEventListener("keydown", onKeyDown);
       };
-   }, [isOverlayOpen]);
+   }, [isOverlayWindow, closeOverlay]);
+
+   if (isOverlayWindow) {
+      return (
+         <div
+            style={{
+               position: "fixed",
+               inset: 0,
+               display: "flex",
+               alignItems: "center",
+               justifyContent: "center",
+               background: "rgba(15, 16, 18, 0.6)",
+               backdropFilter: "blur(4px)",
+               color: "#f6f7f9",
+            }}
+         >
+            <button
+               onClick={closeOverlay}
+               aria-label="Close overlay"
+               style={{
+                  position: "absolute",
+                  top: "20px",
+                  right: "20px",
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "10px",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  background: "rgba(0,0,0,0.35)",
+                  color: "#fff",
+                  fontSize: "20px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+               }}
+            >
+               x
+            </button>
+            <div
+               style={{
+                  padding: "2.5rem 3.5rem",
+                  borderRadius: "20px",
+                  background: "rgba(22,24,27,0.82)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  boxShadow: "0 30px 80px rgba(0,0,0,0.55)",
+                  textAlign: "center",
+                  maxWidth: "520px",
+                  width: "90%",
+               }}
+            >
+               <h2 style={{ marginTop: 0, marginBottom: "0.5rem" }}>Overlay</h2>
+               <p style={{ margin: 0, opacity: 0.85 }}>Press Esc or click the X to close.</p>
+            </div>
+         </div>
+      );
+   }
 
    return (
       <div
@@ -99,58 +161,6 @@ export default function App() {
          >
             Open Overlay
          </button>
-
-         {isOverlayOpen ? (
-            <div
-               style={{
-                  position: "fixed",
-                  inset: 0,
-                  background: "rgba(15, 16, 18, 0.85)",
-                  backdropFilter: "blur(2px)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  zIndex: 1000,
-                  color: "#f6f7f9",
-               }}
-            >
-               <button
-                  onClick={closeOverlay}
-                  aria-label="Close overlay"
-                  style={{
-                     position: "absolute",
-                     top: "20px",
-                     right: "20px",
-                     width: "38px",
-                     height: "38px",
-                     borderRadius: "10px",
-                     border: "1px solid rgba(255,255,255,0.15)",
-                     background: "rgba(0,0,0,0.35)",
-                     color: "#fff",
-                     fontSize: "20px",
-                     cursor: "pointer",
-                     display: "flex",
-                     alignItems: "center",
-                     justifyContent: "center",
-                  }}
-               >
-                  ×
-               </button>
-               <div
-                  style={{
-                     padding: "2rem 3rem",
-                     borderRadius: "18px",
-                     background: "rgba(22,24,27,0.92)",
-                     border: "1px solid rgba(255,255,255,0.08)",
-                     boxShadow: "0 30px 80px rgba(0,0,0,0.45)",
-                     textAlign: "center",
-                  }}
-               >
-                  <h2 style={{ marginTop: 0, marginBottom: "0.5rem" }}>Overlay</h2>
-                  <p style={{ margin: 0, opacity: 0.8 }}>Press Esc or click the X to close.</p>
-               </div>
-            </div>
-         ) : null}
       </div>
    );
 }

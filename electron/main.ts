@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Tray, Menu, ipcMain } from "electron";
+import { app, BrowserWindow, Tray, Menu, ipcMain, screen } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -22,6 +22,7 @@ if (!gotLock) {
    // Keep a reference to the main window so we can focus/restore it later
    let win: BrowserWindow | null = null;
    let tray: Tray | null = null;
+   let overlayWin: BrowserWindow | null = null;
    let initialDeepLink = "";
 
    const getDeepLinkFromArgv = (argv: string[]) =>
@@ -39,6 +40,52 @@ if (!gotLock) {
             win.focus();
          }
       }
+   };
+
+   const createOverlayWindow = () => {
+      if (overlayWin) {
+         overlayWin.show();
+         overlayWin.focus();
+         return;
+      }
+
+      const { bounds } = screen.getPrimaryDisplay();
+
+      overlayWin = new BrowserWindow({
+         transparent: true,
+         frame: false,
+         fullscreenable: false,
+         x: bounds.x,
+         y: bounds.y,
+         width: bounds.width,
+         height: bounds.height,
+         resizable: false,
+         movable: false,
+         skipTaskbar: true,
+         alwaysOnTop: true,
+         hasShadow: false,
+         backgroundColor: "#00000000",
+         webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+         },
+      });
+
+      overlayWin.setAlwaysOnTop(true, "screen-saver");
+      overlayWin.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+      overlayWin.on("ready-to-show", () => {
+         overlayWin?.show();
+         overlayWin?.focus();
+      });
+
+      if (isDev) {
+         overlayWin.loadURL("http://localhost:5173/?overlay=1");
+      } else {
+         overlayWin.loadFile(path.join(__dirname, "../frontend/index.html"), { search: "overlay=1" });
+      }
+
+      overlayWin.on("closed", () => {
+         overlayWin = null;
+      });
    };
 
    function createWindow() {
@@ -140,9 +187,14 @@ if (!gotLock) {
 
       createWindow();
 
-      ipcMain.on("overlay:fullscreen", (_event, shouldEnter: boolean) => {
-         if (!win) return;
-         win.setFullScreen(shouldEnter);
+      ipcMain.handle("overlay:open", () => {
+         createOverlayWindow();
+      });
+
+      ipcMain.handle("overlay:close", () => {
+         if (!overlayWin) return;
+         overlayWin.close();
+         overlayWin = null;
       });
 
       if (initialDeepLink) {

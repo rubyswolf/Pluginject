@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld("overlay", {
-   enterFullscreen: () => ipcRenderer.send("overlay:fullscreen", true),
-   exitFullscreen: () => ipcRenderer.send("overlay:fullscreen", false),
+   openOverlayWindow: () => ipcRenderer.invoke("overlay:open"),
+   closeOverlayWindow: () => ipcRenderer.invoke("overlay:close"),
 });
