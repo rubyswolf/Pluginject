@@ -6,7 +6,8 @@ export default defineConfig({
    base: "./",
    plugins: [react()],
    build: {
-      outDir: "../dist",
+      // Keep frontend assets under dist/frontend so electron main can load them in production builds.
+      outDir: "../dist/frontend",
       emptyOutDir: true,
    },
 });

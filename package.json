@@ -24,6 +24,14 @@
          "build/**/*",
          "package.json"
       ],
+      "protocols": [
+         {
+            "name": "Pluginject Links",
+            "schemes": [
+               "pluginject"
+            ]
+         }
+      ],
       "win": {
          "target": "nsis"
       },
