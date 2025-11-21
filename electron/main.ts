@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Tray, Menu } from "electron";
+import { app, BrowserWindow, Tray, Menu, ipcMain } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -139,6 +139,11 @@ if (!gotLock) {
       });
 
       createWindow();
+
+      ipcMain.on("overlay:fullscreen", (_event, shouldEnter: boolean) => {
+         if (!win) return;
+         win.setFullScreen(shouldEnter);
+      });
 
       if (initialDeepLink) {
          handleDeepLink(initialDeepLink);
