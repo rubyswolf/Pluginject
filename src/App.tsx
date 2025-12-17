@@ -222,6 +222,8 @@ export default function App() {
                   justifyContent: "space-between",
                   padding: "0 0 0 8px",
                   background: palette.header,
+                  backgroundImage:
+                     "radial-gradient(70% 200% at 50% 100%, rgba(45, 69, 102, 0.16), rgba(90,140,210,0) 65%)",
                   WebkitAppRegion: "drag",
                   userSelect: "none",
                } as CSSProperties
@@ -301,7 +303,7 @@ export default function App() {
          <div
             style={{
                height: "2px",
-               background: `linear-gradient(90deg, rgba(26,39,57,0), rgba(255,255,255,0.35), rgba(26,39,57,0))`,
+               background: `linear-gradient(90deg, rgba(18, 35, 59, 1), rgba(38, 63, 99, 1), rgba(49, 69, 97, 1), rgba(38, 63, 99, 1), rgba(18, 35, 59, 1)`,
                WebkitAppRegion: "no-drag",
             }}
          />
