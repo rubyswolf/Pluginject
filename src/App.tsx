@@ -221,7 +221,6 @@ export default function App() {
                   alignItems: "center",
                   justifyContent: "space-between",
                   padding: "0 0 0 8px",
-                  borderBottom: `1px solid ${palette.border}`,
                   background: palette.header,
                   WebkitAppRegion: "drag",
                   userSelect: "none",
@@ -299,6 +298,13 @@ export default function App() {
                </button>
             </div>
          </div>
+         <div
+            style={{
+               height: "2px",
+               background: `linear-gradient(90deg, rgba(26,39,57,0), rgba(255,255,255,0.35), rgba(26,39,57,0))`,
+               WebkitAppRegion: "no-drag",
+            }}
+         />
 
          <div
             style={{
