@@ -84,8 +84,12 @@ export default function App() {
    useEffect(() => {
       if (!window.windowControls) return;
 
-      window.windowControls.isMaximized?.().then((max) => setIsMaximized(!!max));
-      const unsubscribe = window.windowControls.onMaximizeChange?.((max) => setIsMaximized(!!max));
+      window.windowControls
+         .isMaximized?.()
+         .then((max) => setIsMaximized(!!max));
+      const unsubscribe = window.windowControls.onMaximizeChange?.((max) =>
+         setIsMaximized(!!max)
+      );
 
       return () => {
          if (typeof unsubscribe === "function") unsubscribe();
@@ -141,7 +145,9 @@ export default function App() {
                }}
             >
                <h2 style={{ marginTop: 0, marginBottom: "0.5rem" }}>Overlay</h2>
-               <p style={{ margin: 0, opacity: 0.85 }}>Press Esc or click the X to close.</p>
+               <p style={{ margin: 0, opacity: 0.85 }}>
+                  Press Esc or click the X to close.
+               </p>
             </div>
          </div>
       );
@@ -193,9 +199,18 @@ export default function App() {
             }
          >
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-               <img src={logo} alt="Pluginject logo" style={{ height: "18px", width: "18px" }} />
+               <img
+                  src={logo}
+                  alt="Pluginject logo"
+                  style={{ height: "26px", width: "26px" }}
+               />
                <div
-                  style={{ fontWeight: 700, letterSpacing: "0.08em", fontSize: "0.9rem", textTransform: "uppercase" }}
+                  style={{
+                     fontWeight: 700,
+                     letterSpacing: "0.08em",
+                     fontSize: "0.9rem",
+                     textTransform: "uppercase",
+                  }}
                >
                   Pluginject
                </div>
@@ -215,8 +230,12 @@ export default function App() {
                   style={{
                      ...controlButtonStyle,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#1b1e24")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  onMouseEnter={(e) =>
+                     (e.currentTarget.style.background = "#1b1e24")
+                  }
+                  onMouseLeave={(e) =>
+                     (e.currentTarget.style.background = "transparent")
+                  }
                >
                   &#x2013;
                </button>
@@ -225,8 +244,12 @@ export default function App() {
                   style={{
                      ...controlButtonStyle,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#1b1e24")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  onMouseEnter={(e) =>
+                     (e.currentTarget.style.background = "#1b1e24")
+                  }
+                  onMouseLeave={(e) =>
+                     (e.currentTarget.style.background = "transparent")
+                  }
                >
                   {isMaximized ? "▭" : "▢"}
                </button>
@@ -270,16 +293,19 @@ export default function App() {
                   fontSize: "1rem",
                   cursor: "pointer",
                   boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
-                  transition: "transform 120ms ease, box-shadow 120ms ease, background 120ms ease",
+                  transition:
+                     "transform 120ms ease, box-shadow 120ms ease, background 120ms ease",
                }}
                onMouseDown={(e) => e.currentTarget.blur()}
                onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 14px 36px rgba(0,0,0,0.35)";
+                  e.currentTarget.style.boxShadow =
+                     "0 14px 36px rgba(0,0,0,0.35)";
                }}
                onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.25)";
+                  e.currentTarget.style.boxShadow =
+                     "0 10px 30px rgba(0,0,0,0.25)";
                }}
             >
                Open Overlay
