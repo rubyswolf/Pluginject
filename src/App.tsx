@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import closeSfx from "../audio/close.wav";
 import openSfx from "../audio/open.wav";
+import logo from "./icon.svg";
 
 export default function App() {
    const openAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -185,8 +186,13 @@ export default function App() {
                } as CSSProperties
             }
          >
-            <div style={{ fontWeight: 700, letterSpacing: "0.08em", fontSize: "0.9rem", textTransform: "uppercase" }}>
-               Pluginject
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+               <img src={logo} alt="Pluginject logo" style={{ height: "18px", width: "18px" }} />
+               <div
+                  style={{ fontWeight: 700, letterSpacing: "0.08em", fontSize: "0.9rem", textTransform: "uppercase" }}
+               >
+                  Pluginject
+               </div>
             </div>
             <div style={{ display: "flex", gap: "8px", WebkitAppRegion: "no-drag" } as CSSProperties}>
                <button onClick={handleMinimize} style={controlButtonStyle}>
