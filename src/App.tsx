@@ -148,16 +148,20 @@ export default function App() {
    }
 
    const controlButtonStyle: CSSProperties = {
-      width: "34px",
-      height: "26px",
-      borderRadius: "6px",
-      border: "1px solid #2a2d33",
-      background: "#16171d",
-      color: "#f1f3f5",
+      width: "42px",
+      height: "100%",
+      borderRadius: 0,
+      border: "none",
+      background: "transparent",
+      color: "#e9edf5",
       cursor: "pointer",
-      fontSize: "14px",
+      fontSize: "12px",
       lineHeight: 1,
       padding: 0,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "background 120ms ease, color 120ms ease",
    };
 
    return (
@@ -166,6 +170,8 @@ export default function App() {
             display: "flex",
             flexDirection: "column",
             height: "100vh",
+            width: "100vw",
+            boxSizing: "border-box",
             background: "#0f1012",
             color: "#f1f3f5",
             fontFamily: "Inter, system-ui, -apple-system, sans-serif",
@@ -178,7 +184,7 @@ export default function App() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  padding: "0 12px",
+                  padding: "0 0 0 8px",
                   borderBottom: "1px solid #1c1e24",
                   background: "#0b0c0f",
                   WebkitAppRegion: "drag",
@@ -194,16 +200,47 @@ export default function App() {
                   Pluginject
                </div>
             </div>
-            <div style={{ display: "flex", gap: "8px", WebkitAppRegion: "no-drag" } as CSSProperties}>
-               <button onClick={handleMinimize} style={controlButtonStyle}>
+            <div
+               style={
+                  {
+                     display: "flex",
+                     gap: 0,
+                     height: "100%",
+                     WebkitAppRegion: "no-drag",
+                  } as CSSProperties
+               }
+            >
+               <button
+                  onClick={handleMinimize}
+                  style={{
+                     ...controlButtonStyle,
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#1b1e24")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+               >
                   &#x2013;
                </button>
-               <button onClick={handleMaximize} style={controlButtonStyle}>
+               <button
+                  onClick={handleMaximize}
+                  style={{
+                     ...controlButtonStyle,
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#1b1e24")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+               >
                   {isMaximized ? "▭" : "▢"}
                </button>
                <button
                   onClick={handleClose}
-                  style={{ ...controlButtonStyle, background: "#c23b3b", border: "1px solid #c23b3b" }}
+                  style={{ ...controlButtonStyle, color: "#ffffff" }}
+                  onMouseEnter={(e) => {
+                     e.currentTarget.style.background = "#c23b3b";
+                     e.currentTarget.style.color = "#ffffff";
+                  }}
+                  onMouseLeave={(e) => {
+                     e.currentTarget.style.background = "transparent";
+                     e.currentTarget.style.color = "#ffffff";
+                  }}
                >
                   &#x2715;
                </button>
