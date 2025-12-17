@@ -6,7 +6,7 @@ import openSfx from "../audio/open.wav";
 import logo from "./icon.svg";
 
 const palette = {
-   bg: "#0c1523",
+   bg: "#080f1a",
    header: "#0c1728",
    border: "#1a2739",
    button: "#19283d",
@@ -15,8 +15,8 @@ const palette = {
    buttonHoverBorder: "#2d4768",
    text: "#f4f7fb",
    subtitle: "#c4cfde",
-   overlayScrim: "rgba(12, 22, 34, 0.7)",
-   overlayCard: "rgba(19, 32, 50, 0.88)",
+   overlayScrim: "rgba(7, 13, 22, 0.78)",
+   overlayCard: "rgba(14, 24, 38, 0.9)",
    overlayCardBorder: "rgba(255,255,255,0.08)",
    overlayCloseBg: "rgba(20, 34, 54, 0.6)",
 };
