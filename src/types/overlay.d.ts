@@ -11,6 +11,9 @@ declare global {
          close: () => Promise<void>;
          onMaximizeChange?: (callback: (isMaximized: boolean) => void) => void | (() => void);
       };
+      devtools?: {
+         toggle: () => Promise<void>;
+      };
    }
 }
 

@@ -16,3 +16,7 @@ contextBridge.exposeInMainWorld("windowControls", {
       return () => ipcRenderer.removeListener("window:maximize-changed", listener);
    },
 });
+
+contextBridge.exposeInMainWorld("devtools", {
+   toggle: () => ipcRenderer.invoke("devtools:toggle"),
+});

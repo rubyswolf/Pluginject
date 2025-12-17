@@ -233,6 +233,12 @@ if (!gotLock) {
          win?.hide();
       });
 
+      ipcMain.handle("devtools:toggle", () => {
+         if (!isDev) return;
+         const target = BrowserWindow.getFocusedWindow() ?? win ?? overlayWin ?? BrowserWindow.getAllWindows()[0];
+         target?.webContents.toggleDevTools();
+      });
+
       if (initialDeepLink) {
          handleDeepLink(initialDeepLink);
       }
@@ -248,5 +254,9 @@ if (!gotLock) {
       if (process.platform !== "darwin") {
          app.quit();
       }
+   });
+
+   app.on("will-quit", () => {
+      // noop
    });
 }
