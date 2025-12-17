@@ -66,7 +66,7 @@ if (!gotLock) {
          hasShadow: false,
          backgroundColor: "#00000000",
          webPreferences: {
-            preload: path.join(__dirname, "preload.js"),
+            preload: path.join(__dirname, "preload.cjs"),
          },
       });
 
@@ -99,7 +99,7 @@ if (!gotLock) {
          width: 1000,
          height: 700,
          webPreferences: {
-            preload: path.join(__dirname, "preload.js"),
+            preload: path.join(__dirname, "preload.cjs"),
          },
       });
 
