@@ -47,7 +47,8 @@ export default function App() {
 
    const closeOverlay = useCallback(() => {
       playSound(closeAudioRef.current);
-      window.overlay?.closeOverlayWindow();
+      // Wait briefly so the close sound can start before the window is destroyed.
+      setTimeout(() => window.overlay?.closeOverlayWindow(), 120);
    }, [playSound]);
 
    useEffect(() => {

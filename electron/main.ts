@@ -192,9 +192,8 @@ if (!gotLock) {
       });
 
       ipcMain.handle("overlay:close", () => {
-         if (!overlayWin) return;
-         overlayWin.close();
-         overlayWin = null;
+         // Hide instead of closing so sounds can finish playing inside the overlay window.
+         overlayWin?.hide();
       });
 
       if (initialDeepLink) {
