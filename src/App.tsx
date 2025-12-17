@@ -1,4 +1,5 @@
-﻿import { useCallback, useEffect, useMemo, useRef } from "react";
+import type { CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import closeSfx from "../audio/close.wav";
 import openSfx from "../audio/open.wav";
@@ -6,6 +7,7 @@ import openSfx from "../audio/open.wav";
 export default function App() {
    const openAudioRef = useRef<HTMLAudioElement | null>(null);
    const closeAudioRef = useRef<HTMLAudioElement | null>(null);
+   const [isMaximized, setIsMaximized] = useState(false);
 
    useEffect(() => {
       openAudioRef.current = new Audio(openSfx);
@@ -51,6 +53,18 @@ export default function App() {
       setTimeout(() => window.overlay?.closeOverlayWindow(), 120);
    }, [playSound]);
 
+   const handleMinimize = useCallback(() => {
+      window.windowControls?.minimize?.();
+   }, []);
+
+   const handleMaximize = useCallback(() => {
+      window.windowControls?.toggleMaximize?.();
+   }, []);
+
+   const handleClose = useCallback(() => {
+      window.windowControls?.close?.();
+   }, []);
+
    useEffect(() => {
       if (!isOverlayWindow) return;
 
@@ -65,6 +79,17 @@ export default function App() {
          window.removeEventListener("keydown", onKeyDown);
       };
    }, [isOverlayWindow, closeOverlay]);
+
+   useEffect(() => {
+      if (!window.windowControls) return;
+
+      window.windowControls.isMaximized?.().then((max) => setIsMaximized(!!max));
+      const unsubscribe = window.windowControls.onMaximizeChange?.((max) => setIsMaximized(!!max));
+
+      return () => {
+         if (typeof unsubscribe === "function") unsubscribe();
+      };
+   }, []);
 
    if (isOverlayWindow) {
       return (
@@ -100,7 +125,7 @@ export default function App() {
                   justifyContent: "center",
                }}
             >
-               x
+               ×
             </button>
             <div
                style={{
@@ -121,47 +146,102 @@ export default function App() {
       );
    }
 
+   const controlButtonStyle: CSSProperties = {
+      width: "34px",
+      height: "26px",
+      borderRadius: "6px",
+      border: "1px solid #2a2d33",
+      background: "#16171d",
+      color: "#f1f3f5",
+      cursor: "pointer",
+      fontSize: "14px",
+      lineHeight: 1,
+      padding: 0,
+   };
+
    return (
       <div
          style={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
             height: "100vh",
-            gap: "1rem",
             background: "#0f1012",
             color: "#f1f3f5",
             fontFamily: "Inter, system-ui, -apple-system, sans-serif",
          }}
       >
-         <h1 style={{ margin: 0 }}>Pluginject</h1>
-         <p style={{ opacity: 0.8, margin: 0 }}>Overlay demo</p>
-         <button
-            onClick={openOverlay}
+         <div
+            style={
+               {
+                  height: "40px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "0 12px",
+                  borderBottom: "1px solid #1c1e24",
+                  background: "#0b0c0f",
+                  WebkitAppRegion: "drag",
+                  userSelect: "none",
+               } as CSSProperties
+            }
+         >
+            <div style={{ fontWeight: 700, letterSpacing: "0.08em", fontSize: "0.9rem", textTransform: "uppercase" }}>
+               Pluginject
+            </div>
+            <div style={{ display: "flex", gap: "8px", WebkitAppRegion: "no-drag" } as CSSProperties}>
+               <button onClick={handleMinimize} style={controlButtonStyle}>
+                  &#x2013;
+               </button>
+               <button onClick={handleMaximize} style={controlButtonStyle}>
+                  {isMaximized ? "▭" : "▢"}
+               </button>
+               <button
+                  onClick={handleClose}
+                  style={{ ...controlButtonStyle, background: "#c23b3b", border: "1px solid #c23b3b" }}
+               >
+                  &#x2715;
+               </button>
+            </div>
+         </div>
+
+         <div
             style={{
-               padding: "0.9rem 1.4rem",
-               borderRadius: "12px",
-               border: "1px solid #31343a",
-               background: "#1e2026",
-               color: "#f1f3f5",
-               fontSize: "1rem",
-               cursor: "pointer",
-               boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
-               transition: "transform 120ms ease, box-shadow 120ms ease, background 120ms ease",
-            }}
-            onMouseDown={(e) => e.currentTarget.blur()}
-            onMouseEnter={(e) => {
-               e.currentTarget.style.transform = "translateY(-2px)";
-               e.currentTarget.style.boxShadow = "0 14px 36px rgba(0,0,0,0.35)";
-            }}
-            onMouseLeave={(e) => {
-               e.currentTarget.style.transform = "translateY(0)";
-               e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.25)";
+               flex: 1,
+               display: "flex",
+               flexDirection: "column",
+               alignItems: "center",
+               justifyContent: "center",
+               gap: "1rem",
             }}
          >
-            Open Overlay
-         </button>
+            <h1 style={{ margin: 0 }}>Pluginject</h1>
+            <p style={{ opacity: 0.8, margin: 0 }}>Overlay demo</p>
+            <button
+               onClick={openOverlay}
+               style={{
+                  padding: "0.9rem 1.4rem",
+                  borderRadius: "12px",
+                  border: "1px solid #31343a",
+                  background: "#1e2026",
+                  color: "#f1f3f5",
+                  fontSize: "1rem",
+                  cursor: "pointer",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
+                  transition: "transform 120ms ease, box-shadow 120ms ease, background 120ms ease",
+               }}
+               onMouseDown={(e) => e.currentTarget.blur()}
+               onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 14px 36px rgba(0,0,0,0.35)";
+               }}
+               onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.25)";
+               }}
+            >
+               Open Overlay
+            </button>
+         </div>
       </div>
    );
 }

@@ -98,6 +98,9 @@ if (!gotLock) {
       win = new BrowserWindow({
          width: 1000,
          height: 700,
+         frame: false,
+         backgroundColor: "#0f1012",
+         title: "Pluginject",
          webPreferences: {
             preload: path.join(__dirname, "preload.cjs"),
          },
@@ -119,6 +122,14 @@ if (!gotLock) {
             win?.hide();
          }
       });
+
+      win.on("maximize", () => {
+         win?.webContents.send("window:maximize-changed", true);
+      });
+
+      win.on("unmaximize", () => {
+         win?.webContents.send("window:maximize-changed", false);
+      });
    }
 
    // If a second instance is launched, focus/restore the existing window
@@ -137,6 +148,9 @@ if (!gotLock) {
    });
 
    app.whenReady().then(() => {
+      // Remove the default application menu.
+      Menu.setApplicationMenu(null);
+
       // Register the custom protocol so links like pluginject://start open the app.
       if (isDev && process.defaultApp) {
          app.setAsDefaultProtocolClient(pluginjectProtocol, process.execPath, [path.resolve(process.argv[1])]);
@@ -194,6 +208,29 @@ if (!gotLock) {
       ipcMain.handle("overlay:close", () => {
          // Hide instead of closing so sounds can finish playing inside the overlay window.
          overlayWin?.hide();
+      });
+
+      ipcMain.handle("window:minimize", () => {
+         win?.minimize();
+      });
+
+      ipcMain.handle("window:toggle-maximize", () => {
+         if (!win) return false;
+         if (win.isMaximized()) {
+            win.unmaximize();
+            return false;
+         }
+         win.maximize();
+         return true;
+      });
+
+      ipcMain.handle("window:is-maximized", () => {
+         return win?.isMaximized() ?? false;
+      });
+
+      ipcMain.handle("window:close", () => {
+         // Mimic previous behavior of hiding instead of quitting.
+         win?.hide();
       });
 
       if (initialDeepLink) {
