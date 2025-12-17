@@ -5,6 +5,22 @@ import closeSfx from "../audio/close.wav";
 import openSfx from "../audio/open.wav";
 import logo from "./icon.svg";
 
+const palette = {
+   bg: "#0c1523",
+   header: "#0c1728",
+   border: "#1a2739",
+   button: "#19283d",
+   buttonBorder: "#233652",
+   buttonHover: "#203554",
+   buttonHoverBorder: "#2d4768",
+   text: "#f4f7fb",
+   subtitle: "#c4cfde",
+   overlayScrim: "rgba(12, 22, 34, 0.7)",
+   overlayCard: "rgba(19, 32, 50, 0.88)",
+   overlayCardBorder: "rgba(255,255,255,0.08)",
+   overlayCloseBg: "rgba(20, 34, 54, 0.6)",
+};
+
 export default function App() {
    const openAudioRef = useRef<HTMLAudioElement | null>(null);
    const closeAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -50,7 +66,7 @@ export default function App() {
 
    const closeOverlay = useCallback(() => {
       playSound(closeAudioRef.current);
-      // Wait briefly so the close sound can start before the window is destroyed.
+      // Wait briefly so the close sound can start before the window is hidden.
       setTimeout(() => window.overlay?.closeOverlayWindow(), 120);
    }, [playSound]);
 
@@ -84,12 +100,8 @@ export default function App() {
    useEffect(() => {
       if (!window.windowControls) return;
 
-      window.windowControls
-         .isMaximized?.()
-         .then((max) => setIsMaximized(!!max));
-      const unsubscribe = window.windowControls.onMaximizeChange?.((max) =>
-         setIsMaximized(!!max)
-      );
+      window.windowControls.isMaximized?.().then((max) => setIsMaximized(!!max));
+      const unsubscribe = window.windowControls.onMaximizeChange?.((max) => setIsMaximized(!!max));
 
       return () => {
          if (typeof unsubscribe === "function") unsubscribe();
@@ -105,7 +117,7 @@ export default function App() {
                display: "flex",
                alignItems: "center",
                justifyContent: "center",
-               background: "rgba(15, 16, 18, 0.6)",
+               background: palette.overlayScrim,
                backdropFilter: "blur(4px)",
                color: "#f6f7f9",
             }}
@@ -120,8 +132,8 @@ export default function App() {
                   width: "38px",
                   height: "38px",
                   borderRadius: "10px",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  background: "rgba(0,0,0,0.35)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  background: palette.overlayCloseBg,
                   color: "#fff",
                   fontSize: "20px",
                   cursor: "pointer",
@@ -136,8 +148,8 @@ export default function App() {
                style={{
                   padding: "2.5rem 3.5rem",
                   borderRadius: "20px",
-                  background: "rgba(22,24,27,0.82)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: palette.overlayCard,
+                  border: `1px solid ${palette.overlayCardBorder}`,
                   boxShadow: "0 30px 80px rgba(0,0,0,0.55)",
                   textAlign: "center",
                   maxWidth: "520px",
@@ -145,9 +157,7 @@ export default function App() {
                }}
             >
                <h2 style={{ marginTop: 0, marginBottom: "0.5rem" }}>Overlay</h2>
-               <p style={{ margin: 0, opacity: 0.85 }}>
-                  Press Esc or click the X to close.
-               </p>
+               <p style={{ margin: 0, color: "#c7d2e5" }}>Press Esc or click the X to close.</p>
             </div>
          </div>
       );
@@ -159,7 +169,7 @@ export default function App() {
       borderRadius: 0,
       border: "none",
       background: "transparent",
-      color: "#e9edf5",
+      color: "#eaf0f9",
       cursor: "pointer",
       fontSize: "12px",
       lineHeight: 1,
@@ -178,8 +188,8 @@ export default function App() {
             height: "100vh",
             width: "100vw",
             boxSizing: "border-box",
-            background: "#0f1012",
-            color: "#f1f3f5",
+            background: palette.bg,
+            color: palette.text,
             fontFamily: "Inter, system-ui, -apple-system, sans-serif",
          }}
       >
@@ -191,26 +201,17 @@ export default function App() {
                   alignItems: "center",
                   justifyContent: "space-between",
                   padding: "0 0 0 8px",
-                  borderBottom: "1px solid #1c1e24",
-                  background: "#0b0c0f",
+                  borderBottom: `1px solid ${palette.border}`,
+                  background: palette.header,
                   WebkitAppRegion: "drag",
                   userSelect: "none",
                } as CSSProperties
             }
          >
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-               <img
-                  src={logo}
-                  alt="Pluginject logo"
-                  style={{ height: "26px", width: "26px" }}
-               />
+               <img src={logo} alt="Pluginject logo" style={{ height: "26px", width: "26px" }} />
                <div
-                  style={{
-                     fontWeight: 700,
-                     letterSpacing: "0.08em",
-                     fontSize: "0.9rem",
-                     textTransform: "uppercase",
-                  }}
+                  style={{ fontWeight: 700, letterSpacing: "0.08em", fontSize: "0.9rem", textTransform: "uppercase" }}
                >
                   Pluginject
                </div>
@@ -230,12 +231,8 @@ export default function App() {
                   style={{
                      ...controlButtonStyle,
                   }}
-                  onMouseEnter={(e) =>
-                     (e.currentTarget.style.background = "#1b1e24")
-                  }
-                  onMouseLeave={(e) =>
-                     (e.currentTarget.style.background = "transparent")
-                  }
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#15233a")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                >
                   &#x2013;
                </button>
@@ -244,12 +241,8 @@ export default function App() {
                   style={{
                      ...controlButtonStyle,
                   }}
-                  onMouseEnter={(e) =>
-                     (e.currentTarget.style.background = "#1b1e24")
-                  }
-                  onMouseLeave={(e) =>
-                     (e.currentTarget.style.background = "transparent")
-                  }
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#15233a")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                >
                   {isMaximized ? "▭" : "▢"}
                </button>
@@ -281,31 +274,32 @@ export default function App() {
             }}
          >
             <h1 style={{ margin: 0 }}>Pluginject</h1>
-            <p style={{ opacity: 0.8, margin: 0 }}>Overlay demo</p>
+            <p style={{ margin: 0, color: palette.subtitle }}>Overlay demo</p>
             <button
                onClick={openOverlay}
                style={{
                   padding: "0.9rem 1.4rem",
                   borderRadius: "12px",
-                  border: "1px solid #31343a",
-                  background: "#1e2026",
-                  color: "#f1f3f5",
+                  border: `1px solid ${palette.buttonBorder}`,
+                  background: palette.button,
+                  color: palette.text,
                   fontSize: "1rem",
                   cursor: "pointer",
-                  boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
-                  transition:
-                     "transform 120ms ease, box-shadow 120ms ease, background 120ms ease",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.28)",
+                  transition: "transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease",
                }}
                onMouseDown={(e) => e.currentTarget.blur()}
                onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow =
-                     "0 14px 36px rgba(0,0,0,0.35)";
+                  e.currentTarget.style.boxShadow = "0 14px 36px rgba(0,0,0,0.38)";
+                  e.currentTarget.style.background = palette.buttonHover;
+                  e.currentTarget.style.borderColor = palette.buttonHoverBorder;
                }}
                onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                     "0 10px 30px rgba(0,0,0,0.25)";
+                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.28)";
+                  e.currentTarget.style.background = palette.button;
+                  e.currentTarget.style.borderColor = palette.buttonBorder;
                }}
             >
                Open Overlay
