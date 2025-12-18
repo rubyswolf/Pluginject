@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import closeSfx from "../audio/close.wav";
 import openSfx from "../audio/open.wav";
@@ -22,14 +22,7 @@ const palette = {
 };
 
 export default function App() {
-   const openAudioRef = useRef<HTMLAudioElement | null>(null);
-   const closeAudioRef = useRef<HTMLAudioElement | null>(null);
    const [isMaximized, setIsMaximized] = useState(false);
-
-   useEffect(() => {
-      openAudioRef.current = new Audio(openSfx);
-      closeAudioRef.current = new Audio(closeSfx);
-   }, []);
 
    const isOverlayWindow = useMemo(() => {
       const params = new URLSearchParams(window.location.search);
@@ -51,8 +44,8 @@ export default function App() {
       };
    }, [isOverlayWindow]);
 
-   const playSound = useCallback((audio: HTMLAudioElement | null) => {
-      if (!audio) return;
+   const playSound = useCallback((src: string) => {
+      const audio = new Audio(src);
       audio.currentTime = 0;
       audio.play().catch(() => {
          // Ignore autoplay errors (user gesture requirement, etc.)
@@ -60,12 +53,12 @@ export default function App() {
    }, []);
 
    const openOverlay = useCallback(() => {
-      playSound(openAudioRef.current);
+      playSound(openSfx);
       window.overlay?.openOverlayWindow();
    }, [playSound]);
 
    const closeOverlay = useCallback(() => {
-      playSound(closeAudioRef.current);
+      playSound(closeSfx);
       // Wait briefly so the close sound can start before the window is hidden.
       setTimeout(() => window.overlay?.closeOverlayWindow(), 120);
    }, [playSound]);
@@ -301,11 +294,13 @@ export default function App() {
             </div>
          </div>
          <div
-            style={{
-               height: "2px",
-               background: `linear-gradient(90deg, rgba(18, 35, 59, 1), rgba(38, 63, 99, 1), rgba(49, 69, 97, 1), rgba(38, 63, 99, 1), rgba(18, 35, 59, 1)`,
-               WebkitAppRegion: "no-drag",
-            }}
+            style={
+               {
+                  height: "2px",
+                  background: `linear-gradient(90deg, rgba(18, 35, 59, 1), rgba(38, 63, 99, 1), rgba(49, 69, 97, 1), rgba(38, 63, 99, 1), rgba(18, 35, 59, 1)`,
+                  WebkitAppRegion: "no-drag",
+               } as CSSProperties
+            }
          />
 
          <div
