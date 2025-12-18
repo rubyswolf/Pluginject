@@ -11,7 +11,8 @@ const startDeepLink = `${pluginjectProtocol}://start`;
 
 let isQuitting = false;
 const isDev = !app.isPackaged;
-const devTrayPath = path.join(__dirname, "../../build/icon.ico");
+const devIconPath = path.join(__dirname, "../../build/icon.ico");
+let windowIconPath = devIconPath;
 
 // Acquire single instance lock
 const gotLock = app.requestSingleInstanceLock();
@@ -101,6 +102,7 @@ if (!gotLock) {
          frame: false,
          backgroundColor: "#0f1012",
          title: "Pluginject",
+         icon: windowIconPath,
          webPreferences: {
             preload: path.join(__dirname, "preload.cjs"),
          },
@@ -166,7 +168,17 @@ if (!gotLock) {
          handleDeepLink(url);
       });
 
-      const trayPath = isDev ? devTrayPath : path.join(app.getAppPath(), "build", "icon.ico");
+      const bundledIconPath = path.join(app.getAppPath(), "build", "icon.ico");
+      const iconPath = isDev ? devIconPath : bundledIconPath;
+      windowIconPath = iconPath;
+
+      if (isDev) {
+         app.setName("Pluginject");
+         app.setAppUserModelId("Pluginject");
+         app.dock?.setIcon?.(devIconPath);
+      }
+
+      const trayPath = iconPath;
       tray = new Tray(trayPath);
 
       const trayMenu = Menu.buildFromTemplate([
