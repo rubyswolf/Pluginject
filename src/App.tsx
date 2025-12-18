@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import closeSfx from "../audio/close.wav";
 import openSfx from "../audio/open.wav";
 import logo from "./icon.svg";
+import plugdexIcon from "./assets/icons/plugdex.svg";
+import settingsIcon from "./assets/icons/settings.svg";
 
 const palette = {
    bg: "#080f1a",
@@ -23,6 +25,7 @@ const palette = {
 
 export default function App() {
    const [isMaximized, setIsMaximized] = useState(false);
+   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
    const isOverlayWindow = useMemo(() => {
       const params = new URLSearchParams(window.location.search);
@@ -193,6 +196,11 @@ export default function App() {
       transition: "background 120ms ease, color 120ms ease",
    };
 
+   const navItems = [
+      { label: "Plugdex", icon: plugdexIcon },
+      { label: "Settings", icon: settingsIcon },
+   ];
+
    return (
       <div
          style={{
@@ -216,18 +224,14 @@ export default function App() {
                   padding: "0 0 0 8px",
                   background: palette.header,
                   backgroundImage:
-                     "radial-gradient(70% 200% at 50% 100%, rgba(45, 69, 102, 0.16), rgba(90,140,210,0) 65%)",
+                     "radial-gradient(70% 220% at 50% 100%, rgba(90,140,210,0.16), rgba(90,140,210,0) 65%)",
                   WebkitAppRegion: "drag",
                   userSelect: "none",
                } as CSSProperties
             }
          >
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-               <img
-                  src={logo}
-                  alt="Pluginject logo"
-                  style={{ height: "26px", width: "26px" }}
-               />
+               <img src={logo} alt="Pluginject logo" style={{ height: "26px", width: "26px" }} />
                <div
                   style={{
                      fontWeight: 700,
@@ -254,12 +258,8 @@ export default function App() {
                   style={{
                      ...controlButtonStyle,
                   }}
-                  onMouseEnter={(e) =>
-                     (e.currentTarget.style.background = "#15233a")
-                  }
-                  onMouseLeave={(e) =>
-                     (e.currentTarget.style.background = "transparent")
-                  }
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#15233a")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                >
                   &#x2013;
                </button>
@@ -268,12 +268,8 @@ export default function App() {
                   style={{
                      ...controlButtonStyle,
                   }}
-                  onMouseEnter={(e) =>
-                     (e.currentTarget.style.background = "#15233a")
-                  }
-                  onMouseLeave={(e) =>
-                     (e.currentTarget.style.background = "transparent")
-                  }
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#15233a")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                >
                   {isMaximized ? "▭" : "▢"}
                </button>
@@ -297,7 +293,7 @@ export default function App() {
             style={
                {
                   height: "2px",
-                  background: `linear-gradient(90deg, rgba(18, 35, 59, 1), rgba(38, 63, 99, 1), rgba(49, 69, 97, 1), rgba(38, 63, 99, 1), rgba(18, 35, 59, 1)`,
+                  background: `linear-gradient(90deg, rgba(26,39,57,0), rgba(90,140,210,0.55), rgba(26,39,57,0))`,
                   WebkitAppRegion: "no-drag",
                } as CSSProperties
             }
@@ -307,46 +303,105 @@ export default function App() {
             style={{
                flex: 1,
                display: "flex",
-               flexDirection: "column",
-               alignItems: "center",
-               justifyContent: "center",
-               gap: "1rem",
+               flexDirection: "row",
+               width: "100%",
             }}
          >
-            <h1 style={{ margin: 0 }}>Pluginject</h1>
-            <p style={{ margin: 0, color: palette.subtitle }}>Overlay demo</p>
-            <button
-               onClick={openOverlay}
+            <div
+               onMouseEnter={() => setIsSidebarExpanded(true)}
+               onMouseLeave={() => setIsSidebarExpanded(false)}
+               style={
+                  {
+                     width: isSidebarExpanded ? 200 : 72,
+                     transition: "width 180ms ease",
+                     background: "#0a1220",
+                     borderRight: "1px solid rgba(255,255,255,0.04)",
+                     display: "flex",
+                     flexDirection: "column",
+                     paddingTop: "12px",
+                     gap: "6px",
+                     boxSizing: "border-box",
+                     WebkitAppRegion: "no-drag",
+                  } as CSSProperties
+               }
+            >
+               {navItems.map((item) => (
+                  <button
+                     key={item.label}
+                     style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                        width: "100%",
+                        padding: "10px 14px",
+                        background: "transparent",
+                        border: "none",
+                        color: palette.text,
+                        textAlign: "left",
+                        cursor: "pointer",
+                        transition: "background 140ms ease, color 140ms ease",
+                        fontSize: "0.95rem",
+                     }}
+                     onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(90,140,210,0.1)")}
+                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  >
+                     <img src={item.icon} alt={item.label} style={{ height: 22, width: 22 }} />
+                     <span
+                        style={{
+                           opacity: isSidebarExpanded ? 1 : 0,
+                           transition: "opacity 140ms ease",
+                           whiteSpace: "nowrap",
+                        }}
+                     >
+                        {item.label}
+                     </span>
+                  </button>
+               ))}
+            </div>
+
+            <div
                style={{
-                  padding: "0.9rem 1.4rem",
-                  borderRadius: "12px",
-                  border: `1px solid ${palette.buttonBorder}`,
-                  background: palette.button,
-                  color: palette.text,
-                  fontSize: "1rem",
-                  cursor: "pointer",
-                  boxShadow: "0 10px 30px rgba(0,0,0,0.28)",
-                  transition:
-                     "transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease",
-               }}
-               onMouseDown={(e) => e.currentTarget.blur()}
-               onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow =
-                     "0 14px 36px rgba(0,0,0,0.38)";
-                  e.currentTarget.style.background = palette.buttonHover;
-                  e.currentTarget.style.borderColor = palette.buttonHoverBorder;
-               }}
-               onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                     "0 10px 30px rgba(0,0,0,0.28)";
-                  e.currentTarget.style.background = palette.button;
-                  e.currentTarget.style.borderColor = palette.buttonBorder;
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "1rem",
                }}
             >
-               Open Overlay
-            </button>
+               <h1 style={{ margin: 0 }}>Pluginject</h1>
+               <p style={{ margin: 0, color: palette.subtitle }}>Overlay demo</p>
+               <button
+                  onClick={openOverlay}
+                  style={{
+                     padding: "0.9rem 1.4rem",
+                     borderRadius: "12px",
+                     border: `1px solid ${palette.buttonBorder}`,
+                     background: palette.button,
+                     color: palette.text,
+                     fontSize: "1rem",
+                     cursor: "pointer",
+                     boxShadow: "0 10px 30px rgba(0,0,0,0.28)",
+                     transition:
+                        "transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease",
+                  }}
+                  onMouseDown={(e) => e.currentTarget.blur()}
+                  onMouseEnter={(e) => {
+                     e.currentTarget.style.transform = "translateY(-2px)";
+                     e.currentTarget.style.boxShadow = "0 14px 36px rgba(0,0,0,0.38)";
+                     e.currentTarget.style.background = palette.buttonHover;
+                     e.currentTarget.style.borderColor = palette.buttonHoverBorder;
+                  }}
+                  onMouseLeave={(e) => {
+                     e.currentTarget.style.transform = "translateY(0)";
+                     e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.28)";
+                     e.currentTarget.style.background = palette.button;
+                     e.currentTarget.style.borderColor = palette.buttonBorder;
+                  }}
+               >
+                  Open Overlay
+               </button>
+            </div>
          </div>
       </div>
    );
