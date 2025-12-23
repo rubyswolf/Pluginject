@@ -21,12 +21,168 @@ const palette = {
    overlayCard: "rgba(14, 24, 38, 0.9)",
    overlayCardBorder: "rgba(255,255,255,0.08)",
    overlayCloseBg: "rgba(20, 34, 54, 0.6)",
+   accent: "#b3ff00",
 };
 
 const lineGradient =
    "linear-gradient(90deg, rgba(26,39,57,0), rgba(90,140,210,0.55), rgba(26,39,57,0))";
 const lineBackgroundSizeHorizontal = "100vw 2px";
 const lineBackgroundSizeVertical = "100vw 100%";
+
+type ToggleOptionProps = {
+   label: string;
+   description?: string;
+   value: boolean;
+   onChange: (value: boolean) => void;
+};
+
+type DropdownOptionProps = {
+   label: string;
+   description?: string;
+   value: string;
+   options: { label: string; value: string }[];
+   onChange: (value: string) => void;
+};
+
+function ToggleOption({
+   label,
+   description,
+   value,
+   onChange,
+}: ToggleOptionProps) {
+   const trackWidth = 46;
+   const trackHeight = 24;
+   const thumbSize = 18;
+   const trackBorder = 1;
+   const trackPadding = (trackHeight - thumbSize) / 2; // centers thumb vertically and sets horizontal inset
+   const innerTrackWidth = trackWidth - trackBorder * 2;
+   const thumbShift = innerTrackWidth - thumbSize - trackPadding * 2;
+
+   return (
+      <div
+         style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
+            padding: "12px 14px",
+            borderRadius: "10px",
+            border: "1px solid rgba(255,255,255,0.05)",
+            background: "rgba(12,23,40,0.65)",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.22)",
+         }}
+      >
+         <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            <div style={{ fontWeight: 600 }}>{label}</div>
+            {description ? (
+               <div style={{ color: palette.subtitle, fontSize: "0.85rem" }}>
+                  {description}
+               </div>
+            ) : null}
+         </div>
+         <button
+            onClick={() => onChange(!value)}
+            aria-pressed={value}
+            aria-label={`${label} toggle`}
+            style={{
+               flexShrink: 0,
+               flexGrow: 0,
+               position: "relative",
+               width: `${trackWidth}px`,
+               minWidth: `${trackWidth}px`,
+               height: `${trackHeight}px`,
+               borderRadius: `${trackHeight / 2}px`,
+               border: `${trackBorder}px solid ${palette.buttonBorder}`,
+               background: value
+                  ? `linear-gradient(135deg, ${palette.accent}, #d7ff66)`
+                  : "rgba(14,24,38,0.9)",
+               boxShadow: value
+                  ? "0 6px 18px rgba(179,255,0,0.3)"
+                  : "0 6px 18px rgba(0,0,0,0.35)",
+               cursor: "pointer",
+               padding: 0,
+               display: "flex",
+               alignItems: "center",
+               transition: "background 180ms ease, box-shadow 180ms ease",
+            }}
+         >
+            <span
+               style={{
+                  width: `${thumbSize}px`,
+                  height: `${thumbSize}px`,
+                  position: "absolute",
+                  top: "50%",
+                  left: `${trackPadding}px`,
+                  transform: value
+                     ? `translate(${thumbShift}px, -50%)`
+                     : "translate(0, -50%)",
+                  borderRadius: "50%",
+                  background: value ? "#f4ffd1" : "#243c5a",
+                  boxShadow: value
+                     ? "0 4px 12px rgba(179,255,0,0.45)"
+                     : "0 2px 8px rgba(0,0,0,0.28)",
+                  transition:
+                     "transform 180ms ease, background-color 180ms ease, box-shadow 180ms ease",
+               }}
+            />
+         </button>
+      </div>
+   );
+}
+
+function DropdownOption({
+   label,
+   description,
+   value,
+   options,
+   onChange,
+}: DropdownOptionProps) {
+   return (
+      <div
+         style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
+            padding: "12px 14px",
+            borderRadius: "10px",
+            border: "1px solid rgba(255,255,255,0.05)",
+            background: "rgba(12,23,40,0.65)",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.22)",
+         }}
+      >
+         <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            <div style={{ fontWeight: 600 }}>{label}</div>
+            {description ? (
+               <div style={{ color: palette.subtitle, fontSize: "0.85rem" }}>
+                  {description}
+               </div>
+            ) : null}
+         </div>
+         <select
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            style={{
+               background: palette.button,
+               border: `1px solid ${palette.buttonBorder}`,
+               color: palette.text,
+               borderRadius: "10px",
+               padding: "8px 12px",
+               minWidth: "160px",
+               fontSize: "0.95rem",
+               boxShadow: "0 8px 18px rgba(0,0,0,0.26)",
+               cursor: "pointer",
+            }}
+         >
+            {options.map((opt) => (
+               <option key={opt.value} value={opt.value}>
+                  {opt.label}
+               </option>
+            ))}
+         </select>
+      </div>
+   );
+}
 
 export default function App() {
    const [isMaximized, setIsMaximized] = useState(false);
@@ -205,6 +361,11 @@ export default function App() {
       { label: "Plugdex", icon: plugdexIcon },
       { label: "Settings", icon: settingsIcon },
    ];
+
+   const [autoUpdates, setAutoUpdates] = useState(true);
+   const [backgroundAudio, setBackgroundAudio] = useState(false);
+   const [themePreset, setThemePreset] = useState("system");
+   const [profile, setProfile] = useState("default");
 
    const sidebarCollapsedWidth = 56;
    const sidebarExpandedWidth = 132;
@@ -435,48 +596,159 @@ export default function App() {
                   flex: 1,
                   display: "flex",
                   flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "1rem",
+                  gap: "16px",
+                  padding: "22px 28px",
+                  color: palette.text,
+                  overflow: "auto",
                }}
             >
-               <h1 style={{ margin: 0 }}>Pluginject</h1>
-               <p style={{ margin: 0, color: palette.subtitle }}>
-                  Overlay demo
-               </p>
-               <button
-                  onClick={openOverlay}
+               <div
                   style={{
-                     padding: "0.9rem 1.4rem",
-                     borderRadius: "12px",
-                     border: `1px solid ${palette.buttonBorder}`,
-                     background: palette.button,
-                     color: palette.text,
-                     fontSize: "1rem",
-                     cursor: "pointer",
-                     boxShadow: "0 10px 30px rgba(0,0,0,0.28)",
-                     transition:
-                        "transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease",
-                  }}
-                  onMouseDown={(e) => e.currentTarget.blur()}
-                  onMouseEnter={(e) => {
-                     e.currentTarget.style.transform = "translateY(-2px)";
-                     e.currentTarget.style.boxShadow =
-                        "0 14px 36px rgba(0,0,0,0.38)";
-                     e.currentTarget.style.background = palette.buttonHover;
-                     e.currentTarget.style.borderColor =
-                        palette.buttonHoverBorder;
-                  }}
-                  onMouseLeave={(e) => {
-                     e.currentTarget.style.transform = "translateY(0)";
-                     e.currentTarget.style.boxShadow =
-                        "0 10px 30px rgba(0,0,0,0.28)";
-                     e.currentTarget.style.background = palette.button;
-                     e.currentTarget.style.borderColor = palette.buttonBorder;
+                     display: "flex",
+                     alignItems: "center",
+                     justifyContent: "space-between",
+                     gap: "12px",
                   }}
                >
-                  Open Overlay
-               </button>
+                  <div
+                     style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px",
+                     }}
+                  >
+                     <h1
+                        style={{
+                           margin: 0,
+                           fontSize: "1.4rem",
+                           letterSpacing: "0.02em",
+                        }}
+                     >
+                        Settings
+                     </h1>
+                     <p
+                        style={{
+                           margin: 0,
+                           color: palette.subtitle,
+                           fontSize: "0.95rem",
+                        }}
+                     >
+                        Demo controls using custom toggle and dropdown
+                        components.
+                     </p>
+                  </div>
+                  <button
+                     onClick={openOverlay}
+                     style={{
+                        padding: "10px 14px",
+                        borderRadius: "10px",
+                        border: `1px solid ${palette.buttonBorder}`,
+                        background: palette.button,
+                        color: palette.text,
+                        fontSize: "0.95rem",
+                        cursor: "pointer",
+                        boxShadow: "0 10px 26px rgba(0,0,0,0.26)",
+                        transition:
+                           "transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease",
+                     }}
+                     onMouseDown={(e) => e.currentTarget.blur()}
+                     onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                        e.currentTarget.style.boxShadow =
+                           "0 14px 32px rgba(0,0,0,0.34)";
+                        e.currentTarget.style.background = palette.buttonHover;
+                        e.currentTarget.style.borderColor =
+                           palette.buttonHoverBorder;
+                     }}
+                     onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow =
+                           "0 10px 26px rgba(0,0,0,0.26)";
+                        e.currentTarget.style.background = palette.button;
+                        e.currentTarget.style.borderColor =
+                           palette.buttonBorder;
+                     }}
+                  >
+                     Open Overlay
+                  </button>
+               </div>
+
+               <div
+                  style={{
+                     background: "rgba(9, 15, 26, 0.82)",
+                     borderRadius: "16px",
+                     border: `1px solid ${palette.border}`,
+                     padding: "16px",
+                     boxShadow: "0 20px 50px rgba(0,0,0,0.35)",
+                     display: "flex",
+                     flexDirection: "column",
+                     gap: "12px",
+                  }}
+               >
+                  <div
+                     style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: "4px",
+                     }}
+                  >
+                     <div style={{ fontWeight: 700, letterSpacing: "0.02em" }}>
+                        General
+                     </div>
+                     <div
+                        style={{
+                           fontSize: "0.85rem",
+                           color: palette.subtitle,
+                        }}
+                     >
+                        Presets & toggles
+                     </div>
+                  </div>
+                  <div
+                     style={{
+                        display: "grid",
+                        gridTemplateColumns:
+                           "repeat(auto-fit, minmax(280px, 1fr))",
+                        gap: "12px",
+                     }}
+                  >
+                     <ToggleOption
+                        label="Auto updates"
+                        description="Download and apply minor updates automatically."
+                        value={autoUpdates}
+                        onChange={setAutoUpdates}
+                     />
+                     <ToggleOption
+                        label="Background audio"
+                        description="Keep sounds enabled while Pluginject is minimized."
+                        value={backgroundAudio}
+                        onChange={setBackgroundAudio}
+                     />
+                     <DropdownOption
+                        label="Theme"
+                        description="Pick a visual preset for the UI."
+                        value={themePreset}
+                        options={[
+                           { label: "System", value: "system" },
+                           { label: "Midnight", value: "midnight" },
+                           { label: "Neon", value: "neon" },
+                        ]}
+                        onChange={setThemePreset}
+                     />
+                     <DropdownOption
+                        label="Profile"
+                        description="Load preferences for this workspace."
+                        value={profile}
+                        options={[
+                           { label: "Default", value: "default" },
+                           { label: "Streaming", value: "streaming" },
+                           { label: "Gaming", value: "gaming" },
+                        ]}
+                        onChange={setProfile}
+                     />
+                  </div>
+               </div>
             </div>
          </div>
       </div>
