@@ -333,7 +333,7 @@ export default function App() {
                         alignItems: "center",
                         gap: "12px",
                         width: "100%",
-                        padding: "10px 14px",
+                        padding: "10px 14px 10px 8px",
                         background: "transparent",
                         border: "none",
                         color: palette.text,
