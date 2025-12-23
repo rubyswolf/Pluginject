@@ -218,10 +218,10 @@ export default function App() {
             style={
                {
                   height: "40px",
-                  display: "flex",
+                  display: "grid",
+                  gridTemplateColumns: "50px 1fr auto",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "0 0 0 8px",
+                  padding: 0,
                   background: palette.header,
                   backgroundImage:
                      "radial-gradient(70% 220% at 50% 100%, rgba(90,140,210,0.16), rgba(90,140,210,0) 65%)",
@@ -230,8 +230,23 @@ export default function App() {
                } as CSSProperties
             }
          >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div
+               style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+               }}
+            >
                <img src={logo} alt="Pluginject logo" style={{ height: "26px", width: "26px" }} />
+            </div>
+            <div
+               style={{
+                  display: "flex",
+                  alignItems: "center",
+                  height: "100%",
+               }}
+            >
                <div
                   style={{
                      fontWeight: 700,
@@ -312,7 +327,7 @@ export default function App() {
                onMouseLeave={() => setIsSidebarExpanded(false)}
                style={
                   {
-                     width: isSidebarExpanded ? 200 : 72,
+                     width: isSidebarExpanded ? 200 : 50,
                      transition: "width 180ms ease",
                      background: "#0a1220",
                      borderRight: "1px solid rgba(255,255,255,0.04)",
@@ -331,9 +346,9 @@ export default function App() {
                      style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "12px",
+                        gap: isSidebarExpanded ? "12px" : 0,
                         width: "100%",
-                        padding: "10px 14px 10px 8px",
+                        padding: "10px 14px",
                         background: "transparent",
                         border: "none",
                         color: palette.text,
@@ -344,16 +359,18 @@ export default function App() {
                      }}
                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(90,140,210,0.1)")}
                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                  >
-                     <img src={item.icon} alt={item.label} style={{ height: 22, width: 22 }} />
-                     <span
-                        style={{
-                           opacity: isSidebarExpanded ? 1 : 0,
-                           transition: "opacity 140ms ease",
-                           whiteSpace: "nowrap",
-                        }}
                      >
-                        {item.label}
+                        <img src={item.icon} alt={item.label} style={{ height: 22, width: 22 }} />
+                        <span
+                           style={{
+                              opacity: isSidebarExpanded ? 1 : 0,
+                              maxWidth: isSidebarExpanded ? "200px" : 0,
+                              overflow: "hidden",
+                              transition: "opacity 140ms ease, max-width 140ms ease",
+                              whiteSpace: "nowrap",
+                           }}
+                        >
+                           {item.label}
                      </span>
                   </button>
                ))}
