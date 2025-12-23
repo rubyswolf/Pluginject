@@ -225,6 +225,7 @@ export default function App() {
                   background: palette.header,
                   backgroundImage:
                      "radial-gradient(70% 220% at 50% 100%, rgba(90,140,210,0.16), rgba(90,140,210,0) 65%)",
+                  position: "relative",
                   WebkitAppRegion: "drag",
                   userSelect: "none",
                } as CSSProperties
@@ -238,7 +239,11 @@ export default function App() {
                   height: "100%",
                }}
             >
-               <img src={logo} alt="Pluginject logo" style={{ height: "26px", width: "26px" }} />
+               <img
+                  src={logo}
+                  alt="Pluginject logo"
+                  style={{ height: "26px", width: "26px" }}
+               />
             </div>
             <div
                style={{
@@ -273,8 +278,12 @@ export default function App() {
                   style={{
                      ...controlButtonStyle,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#15233a")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  onMouseEnter={(e) =>
+                     (e.currentTarget.style.background = "#15233a")
+                  }
+                  onMouseLeave={(e) =>
+                     (e.currentTarget.style.background = "transparent")
+                  }
                >
                   &#x2013;
                </button>
@@ -283,8 +292,12 @@ export default function App() {
                   style={{
                      ...controlButtonStyle,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#15233a")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  onMouseEnter={(e) =>
+                     (e.currentTarget.style.background = "#15233a")
+                  }
+                  onMouseLeave={(e) =>
+                     (e.currentTarget.style.background = "transparent")
+                  }
                >
                   {isMaximized ? "▭" : "▢"}
                </button>
@@ -303,17 +316,16 @@ export default function App() {
                   &#x2715;
                </button>
             </div>
-         </div>
-         <div
-            style={
-               {
+            <div
+               style={{
+                  position: "absolute",
+                  inset: "auto 0 0 0",
                   height: "2px",
                   background: `linear-gradient(90deg, rgba(26,39,57,0), rgba(90,140,210,0.55), rgba(26,39,57,0))`,
-                  WebkitAppRegion: "no-drag",
-               } as CSSProperties
-            }
-         />
-
+                  pointerEvents: "none",
+               }}
+            />
+         </div>
          <div
             style={{
                flex: 1,
@@ -327,14 +339,14 @@ export default function App() {
                onMouseLeave={() => setIsSidebarExpanded(false)}
                style={
                   {
-                     width: isSidebarExpanded ? 200 : 50,
+                     width: isSidebarExpanded ? 200 : 55,
                      transition: "width 180ms ease",
                      background: "#0a1220",
                      borderRight: "1px solid rgba(255,255,255,0.04)",
                      display: "flex",
                      flexDirection: "column",
-                     paddingTop: "12px",
-                     gap: "6px",
+                     paddingTop: 0,
+                     gap: 0,
                      boxSizing: "border-box",
                      WebkitAppRegion: "no-drag",
                   } as CSSProperties
@@ -353,24 +365,34 @@ export default function App() {
                         border: "none",
                         color: palette.text,
                         textAlign: "left",
-                        cursor: "pointer",
+                         cursor: "pointer",
                         transition: "background 140ms ease, color 140ms ease",
                         fontSize: "0.95rem",
                      }}
-                     onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(90,140,210,0.1)")}
-                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                     onMouseEnter={(e) =>
+                        (e.currentTarget.style.background =
+                           "rgba(90,140,210,0.1)")
+                     }
+                     onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "transparent")
+                     }
+                  >
+                     <img
+                        src={item.icon}
+                        alt={item.label}
+                        style={{ height: 22, width: 22 }}
+                     />
+                     <span
+                        style={{
+                           opacity: isSidebarExpanded ? 1 : 0,
+                           maxWidth: isSidebarExpanded ? "200px" : 0,
+                           overflow: "hidden",
+                           transition:
+                              "opacity 140ms ease, max-width 140ms ease",
+                           whiteSpace: "nowrap",
+                        }}
                      >
-                        <img src={item.icon} alt={item.label} style={{ height: 22, width: 22 }} />
-                        <span
-                           style={{
-                              opacity: isSidebarExpanded ? 1 : 0,
-                              maxWidth: isSidebarExpanded ? "200px" : 0,
-                              overflow: "hidden",
-                              transition: "opacity 140ms ease, max-width 140ms ease",
-                              whiteSpace: "nowrap",
-                           }}
-                        >
-                           {item.label}
+                        {item.label}
                      </span>
                   </button>
                ))}
@@ -387,7 +409,9 @@ export default function App() {
                }}
             >
                <h1 style={{ margin: 0 }}>Pluginject</h1>
-               <p style={{ margin: 0, color: palette.subtitle }}>Overlay demo</p>
+               <p style={{ margin: 0, color: palette.subtitle }}>
+                  Overlay demo
+               </p>
                <button
                   onClick={openOverlay}
                   style={{
@@ -405,13 +429,16 @@ export default function App() {
                   onMouseDown={(e) => e.currentTarget.blur()}
                   onMouseEnter={(e) => {
                      e.currentTarget.style.transform = "translateY(-2px)";
-                     e.currentTarget.style.boxShadow = "0 14px 36px rgba(0,0,0,0.38)";
+                     e.currentTarget.style.boxShadow =
+                        "0 14px 36px rgba(0,0,0,0.38)";
                      e.currentTarget.style.background = palette.buttonHover;
-                     e.currentTarget.style.borderColor = palette.buttonHoverBorder;
+                     e.currentTarget.style.borderColor =
+                        palette.buttonHoverBorder;
                   }}
                   onMouseLeave={(e) => {
                      e.currentTarget.style.transform = "translateY(0)";
-                     e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.28)";
+                     e.currentTarget.style.boxShadow =
+                        "0 10px 30px rgba(0,0,0,0.28)";
                      e.currentTarget.style.background = palette.button;
                      e.currentTarget.style.borderColor = palette.buttonBorder;
                   }}
