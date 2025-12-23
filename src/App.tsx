@@ -23,6 +23,11 @@ const palette = {
    overlayCloseBg: "rgba(20, 34, 54, 0.6)",
 };
 
+const lineGradient =
+   "linear-gradient(90deg, rgba(26,39,57,0), rgba(90,140,210,0.55), rgba(26,39,57,0))";
+const lineBackgroundSizeHorizontal = "100vw 2px";
+const lineBackgroundSizeVertical = "100vw 100%";
+
 export default function App() {
    const [isMaximized, setIsMaximized] = useState(false);
    const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -201,6 +206,12 @@ export default function App() {
       { label: "Settings", icon: settingsIcon },
    ];
 
+   const sidebarCollapsedWidth = 56;
+   const sidebarExpandedWidth = 132;
+   const sidebarWidth = isSidebarExpanded
+      ? sidebarExpandedWidth
+      : sidebarCollapsedWidth;
+
    return (
       <div
          style={{
@@ -208,6 +219,7 @@ export default function App() {
             flexDirection: "column",
             height: "100vh",
             width: "100vw",
+            position: "relative",
             boxSizing: "border-box",
             background: palette.bg,
             color: palette.text,
@@ -219,7 +231,7 @@ export default function App() {
                {
                   height: "40px",
                   display: "grid",
-                  gridTemplateColumns: "50px 1fr auto",
+                  gridTemplateColumns: `${sidebarCollapsedWidth}px 1fr auto`,
                   alignItems: "center",
                   padding: 0,
                   background: palette.header,
@@ -235,14 +247,15 @@ export default function App() {
                style={{
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
+                  justifyContent: "flex-start",
+                  paddingLeft: "12px",
                   height: "100%",
                }}
             >
                <img
                   src={logo}
                   alt="Pluginject logo"
-                  style={{ height: "26px", width: "26px" }}
+                  style={{ height: "29px", width: "29px" }}
                />
             </div>
             <div
@@ -321,7 +334,10 @@ export default function App() {
                   position: "absolute",
                   inset: "auto 0 0 0",
                   height: "2px",
-                  background: `linear-gradient(90deg, rgba(26,39,57,0), rgba(90,140,210,0.55), rgba(26,39,57,0))`,
+                  backgroundImage: lineGradient,
+                  backgroundSize: lineBackgroundSizeHorizontal,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "0 0",
                   pointerEvents: "none",
                }}
             />
@@ -332,17 +348,33 @@ export default function App() {
                display: "flex",
                flexDirection: "row",
                width: "100%",
+               position: "relative",
             }}
          >
+            <div
+               style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left: `${sidebarWidth - 1}px`,
+                  width: "2px",
+                  backgroundImage: lineGradient,
+                  backgroundSize: lineBackgroundSizeVertical,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: `-${sidebarWidth - 1}px 0`,
+                  pointerEvents: "none",
+                  zIndex: 1,
+               }}
+            />
             <div
                onMouseEnter={() => setIsSidebarExpanded(true)}
                onMouseLeave={() => setIsSidebarExpanded(false)}
                style={
                   {
-                     width: isSidebarExpanded ? 200 : 55,
+                     width: sidebarWidth,
                      transition: "width 180ms ease",
                      background: "#0a1220",
-                     borderRight: "1px solid rgba(255,255,255,0.04)",
+                     borderRight: "none",
                      display: "flex",
                      flexDirection: "column",
                      paddingTop: 0,
@@ -365,7 +397,7 @@ export default function App() {
                         border: "none",
                         color: palette.text,
                         textAlign: "left",
-                         cursor: "pointer",
+                        cursor: "pointer",
                         transition: "background 140ms ease, color 140ms ease",
                         fontSize: "0.95rem",
                      }}
@@ -380,7 +412,7 @@ export default function App() {
                      <img
                         src={item.icon}
                         alt={item.label}
-                        style={{ height: 22, width: 22 }}
+                        style={{ height: 24, width: 24 }}
                      />
                      <span
                         style={{
